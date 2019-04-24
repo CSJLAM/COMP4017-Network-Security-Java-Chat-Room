@@ -71,6 +71,7 @@ public class ChatClient implements Runnable {
             }
     }
 
+
     public void handleSendMessage(String plainText) {
 
 
@@ -359,6 +360,20 @@ public class ChatClient implements Runnable {
             String plainHash = decryptMessage(msg.getHash(), msg.getPublicKey());
             if (hash.equals(plainHash)) {
                 this.isAuth = false;
+                //secKey = getSecretEncryptionKey();
+                System.out.println(msg.getUsername() + " : " + new String(msg.getCipher()));
+            }
+        } catch (Exception e) {
+            System.err.println(e.toString());
+        }
+    }
+    public void JoinChat(Message msg) {
+        try {
+            String hash = toHash(new String(msg.getCipher()));
+            String plainHash = decryptMessage(msg.getHash(), msg.getPublicKey());
+            if (hash.equals(plainHash)) {
+                this.isAuth = true;
+                requestSecKey();
                 //secKey = getSecretEncryptionKey();
                 System.out.println(msg.getUsername() + " : " + new String(msg.getCipher()));
             }

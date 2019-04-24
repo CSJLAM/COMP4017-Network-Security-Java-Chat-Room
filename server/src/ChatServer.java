@@ -199,6 +199,7 @@ public class ChatServer implements Runnable {
         } else
             System.out.println("Auth Client refused: maximum " + Auth.length + " reached.");
     }
+
     private void addThread(Socket socket) {
         if (clientCount < clients.length) {
             System.out.println("Client accepted: " + socket);
@@ -275,24 +276,26 @@ public class ChatServer implements Runnable {
         }
 }
 public synchronized void AuthSuccess(int ID, Socket socket,String StudendID){
-    //removeAuth(ID);
-       // addThread(socket);
-    if (clientCount < clients.length) {
-        System.out.println("Client accepted: " + socket);
-        clients[clientCount] = new ChatServerThread(Auth[findAuth(ID)].GetThreadServer(), socket);
-        try {
-            clients[clientCount].open();
-            clients[clientCount].start();
-            if(this.clientCount == 0){
-                initAdmin();
-            }
-            acknowledgeNewClientJoin();
-            clientCount++;
-        } catch (IOException ioe) {
-            System.out.println("Error opening thread: " + ioe);
-        }
-    } else
-        System.out.println("Client refused: maximum " + clients.length + " reached.");
+
+    try {
+
+        String plainText = "Verify Success";
+        String hash = toHash(plainText);
+
+        String cipherHash = encryptMessage(hash, (PrivateKey) keypair.get("private"));
+        // AES
+        byte[] cipherText = plainText.getBytes();
+
+        Message msg = new Message(this.getClass().getName(), cipherText, cipherHash, (PublicKey) keypair.get("public"));
+        msg.setMessageType(MessageType.JoinChat);
+        Auth[findAuth(ID)].send(msg);
+
+    } catch (Exception e) {
+        System.err.println("Verify Success error:" + e.toString());
+    }
+
+    addThread(socket);
+    removeAuth(ID);
 
 }
 public synchronized void  AuthSendMessage(int ID, String plainText){

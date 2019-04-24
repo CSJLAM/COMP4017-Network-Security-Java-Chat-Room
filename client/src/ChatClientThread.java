@@ -71,6 +71,9 @@ public class ChatClientThread extends Thread {
                         break;
                     case SendAuthID:
                         client.SendAuthID(msg);
+                        break;
+                    case JoinChat:
+                        client.JoinChat(msg);
                     default:
                         break;
                 }

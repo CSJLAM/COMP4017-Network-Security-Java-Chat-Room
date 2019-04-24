@@ -4,7 +4,7 @@ import java.security.PublicKey;
 
 
 enum MessageType {
-    Client, initAdmin, SendSecretKey, NewClientJoin, RequestSecKey, changeAdmin, AuthEmail, SendAuthID
+    Client, initAdmin, SendSecretKey, NewClientJoin, RequestSecKey, changeAdmin, AuthEmail, SendAuthID,JoinChat
 }
 
 
