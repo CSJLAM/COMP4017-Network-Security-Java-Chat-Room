@@ -66,6 +66,11 @@ public class ChatClientThread extends Thread {
 
                         }
                         break;
+                    case AuthEmail:
+                        client.AuthEmail(msg);
+                        break;
+                    case SendAuthID:
+                        client.SendAuthID(msg);
                     default:
                         break;
                 }

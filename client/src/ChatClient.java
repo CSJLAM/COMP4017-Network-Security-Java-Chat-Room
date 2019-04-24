@@ -35,6 +35,7 @@ public class ChatClient implements Runnable {
     private SSLSocket sslSocket;
 
     private boolean isAdmin = false;
+    private boolean isAuth = false;
 
 
     public ChatClient(String username) {
@@ -73,23 +74,35 @@ public class ChatClient implements Runnable {
     public void handleSendMessage(String plainText) {
 
 
-
         try {
+            if (isAuth) {
+                String hash = toHash(plainText);
 
-            String hash = toHash(plainText);
+                // RSA
+                String cipherHash = encryptMessage(hash, (PrivateKey) keypair.get("private"));
 
-            // RSA
-            String cipherHash = encryptMessage(hash, (PrivateKey) keypair.get("private"));
+                // AES
+                byte[] cipherText = secKeyEncryptText(plainText, secKey);
 
-            // AES
-            byte[] cipherText = secKeyEncryptText(plainText, secKey);
+                Message msg = new Message(this.username, cipherText, cipherHash, (PublicKey) keypair.get("public"));
 
-            Message msg = new Message(this.username, cipherText, cipherHash, (PublicKey) keypair.get("public"));
-
-            objectOutputStream.writeObject(msg);
-            objectOutputStream.flush();
+                objectOutputStream.writeObject(msg);
+                objectOutputStream.flush();
 //            streamOut.writeUTF(plainText);
 //            streamOut.flush();
+            } else {
+
+                String hash = toHash(plainText);
+
+                String cipherHash = encryptMessage(hash, (PrivateKey) keypair.get("private"));
+                // AES
+                byte[] cipherText = plainText.getBytes();
+
+                Message msg = new Message(this.username, cipherText, cipherHash, (PublicKey) keypair.get("public"));
+                msg.setMessageType(MessageType.SendAuthID);
+                objectOutputStream.writeObject(msg);
+                objectOutputStream.flush();
+            }
         } catch (Exception e) {
             System.err.println("Error: " + e.toString());
         }
@@ -122,7 +135,7 @@ public class ChatClient implements Runnable {
         console = new BufferedReader(new InputStreamReader(System.in));
         streamOut = new DataOutputStream(socket.getOutputStream());
         objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-        requestSecKey();
+        // requestSecKey();
         if (thread == null) {
             client = new ChatClientThread(this, socket);
             thread = new Thread(this);
@@ -274,21 +287,21 @@ public class ChatClient implements Runnable {
         }
     }
 
-    public void readMessage(Message msg){
+    public void readMessage(Message msg) {
         try {
             String plainText = secKeyDecryptText(msg.getCipher(), secKey);
-            if(toHash(plainText).equals(decryptMessage(msg.getHash(), msg.getPublicKey()))){
+            if (toHash(plainText).equals(decryptMessage(msg.getHash(), msg.getPublicKey()))) {
                 System.out.println(msg.getUsername() + ": " + plainText);
             } else {
                 System.err.println("The message have been modified");
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             System.err.println("Cannot read message: " + e.toString());
         }
 
     }
 
-    public void requestSecKey(){
+    public void requestSecKey() {
         String plainText = "Request SecKey";
         String hash = toHash(plainText);
         try {
@@ -340,19 +353,47 @@ public class ChatClient implements Runnable {
         }
     }
 
-    public void NewClientJoin(Message msg) {
+    public void AuthEmail(Message msg) {
         try {
             String hash = toHash(new String(msg.getCipher()));
             String plainHash = decryptMessage(msg.getHash(), msg.getPublicKey());
             if (hash.equals(plainHash)) {
-                System.out.println(msg.getUsername() + " : " +  new String(msg.getCipher()));
+                this.isAuth = false;
+                //secKey = getSecretEncryptionKey();
+                System.out.println(msg.getUsername() + " : " + new String(msg.getCipher()));
             }
         } catch (Exception e) {
             System.err.println(e.toString());
         }
     }
 
-    public boolean getIsAdmin(){
+    public void SendAuthID(Message msg) {
+        try {
+            String hash = toHash(new String(msg.getCipher()));
+            String plainHash = decryptMessage(msg.getHash(), msg.getPublicKey());
+            if (hash.equals(plainHash)) {
+
+                System.out.println(msg.getUsername() + " : " + new String(msg.getCipher()));
+            }
+        } catch (Exception e) {
+            System.err.println(e.toString());
+        }
+    }
+
+
+    public void NewClientJoin(Message msg) {
+        try {
+            String hash = toHash(new String(msg.getCipher()));
+            String plainHash = decryptMessage(msg.getHash(), msg.getPublicKey());
+            if (hash.equals(plainHash)) {
+                System.out.println(msg.getUsername() + " : " + new String(msg.getCipher()));
+            }
+        } catch (Exception e) {
+            System.err.println(e.toString());
+        }
+    }
+
+    public boolean getIsAdmin() {
         return this.isAdmin;
     }
 
@@ -393,14 +434,14 @@ public class ChatClient implements Runnable {
         }
     }
 
-    public void setSecKey(Message msg){
+    public void setSecKey(Message msg) {
         try {
 
             String stringKey = decryptMessage(new String(msg.getCipher()), (PrivateKey) keypair.get("private"));
 
             String hash = toHash(stringKey);
 
-            if(hash.equals(decryptMessage(msg.getHash(), msg.getPublicKey()))){
+            if (hash.equals(decryptMessage(msg.getHash(), msg.getPublicKey()))) {
                 byte[] decodedKey = Base64.getDecoder().decode(stringKey);
                 SecretKey originalKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
                 this.secKey = originalKey;
@@ -410,7 +451,7 @@ public class ChatClient implements Runnable {
                 System.exit(-1);
             }
 
-        } catch (Exception e){
+        } catch (Exception e) {
             System.err.println("Cannot set secret key: " + e.toString());
         }
     }

@@ -17,6 +17,7 @@ import java.util.Map;
 
 public class ChatServer implements Runnable {
     private ChatServerThread clients[] = new ChatServerThread[50];
+    private AuthThread Auth[] = new AuthThread[50];
     private static final String SERVER_KEY_STORE_PASSWORD       = "1234ks";
     private static final String SERVER_TRUST_KEY_STORE_PASSWORD = "9876ks";
     private SSLServerSocket serverSocket;
@@ -24,6 +25,7 @@ public class ChatServer implements Runnable {
     //private ServerSocket server = null;
     private volatile Thread thread = null;
     private int clientCount = 0;
+    private int authCount = 0;
     private int port = 54321;
 
     private MessageDigest md;
@@ -72,7 +74,8 @@ public class ChatServer implements Runnable {
             try {
                 System.out.println("Waiting for a client ...");
                 s = serverSocket.accept();
-                addThread(s);
+                //addThread(s);
+                addAuth(s);
             } catch (IOException ioe) {
                 System.out.println("Server accept error: " + ioe);
                 stop();
@@ -98,6 +101,12 @@ public class ChatServer implements Runnable {
             if (clients[i].getID() == ID)
                 return i;
         return -1;
+    }
+    private  int findAuth(int ID){
+        for (int i = 0; i<authCount; i++)
+            if(Auth[i].getID() == ID)
+                return i;
+            return -1;
     }
 
     public synchronized void handle(Message msg) {
@@ -129,7 +138,23 @@ public class ChatServer implements Runnable {
     }
 
 
+    public synchronized void removeAuth(int ID) {
+        int pos = findAuth(ID);
+        if (pos >= 0) {
+            AuthThread toTerminate = Auth[pos];
+            System.out.println("Removing client thread " + ID + " at " + pos);
+            if (pos < authCount - 1){
+                System.out.println("Client count" + authCount);
+                System.out.println("Adjust client pos");
+                for (int i = pos + 1; i < authCount; i++)
+                    Auth[i - 1] = Auth[i];
+            }
 
+            authCount--;
+
+            toTerminate.stopThread();
+        }
+    }
     public synchronized void remove(int ID) {
         int pos = findClient(ID);
         if (pos >= 0) {
@@ -155,7 +180,25 @@ public class ChatServer implements Runnable {
         }
     }
 
-
+    private void addAuth(Socket socket){
+        if (authCount < Auth.length) {
+            System.out.println("Auth Client accepted: " + socket);
+            Auth[authCount] = new AuthThread(this, socket);
+            try {
+                Auth[authCount].open();
+                Auth[authCount].start();
+                if(this.authCount == 0){
+                    //initAdmin();
+                }
+                AuthEmail(authCount);
+                //acknowledgeNewClientJoin();
+                authCount++;
+            } catch (IOException ioe) {
+                System.out.println("Error opening thread: " + ioe);
+            }
+        } else
+            System.out.println("Auth Client refused: maximum " + Auth.length + " reached.");
+    }
     private void addThread(Socket socket) {
         if (clientCount < clients.length) {
             System.out.println("Client accepted: " + socket);
@@ -214,6 +257,62 @@ public class ChatServer implements Runnable {
             System.err.println("Change Admin Error: " + e.toString());
         }
     }
+    public synchronized  void  AuthEmail(int Count){
+        try{
+            //String plainText ="Auth Email";
+            String plainText ="Please enter your HKBU Student ID";
+            String hash = toHash(plainText);
+
+            String cipherHash = encryptMessage(hash, (PrivateKey) keypair.get("private"));
+            // AES
+            byte[] cipherText = plainText.getBytes();
+
+            Message msg = new Message(this.getClass().getName(), cipherText, cipherHash, (PublicKey) keypair.get("public"));
+            msg.setMessageType(MessageType.AuthEmail);
+            Auth[Count].send(msg);
+        } catch (Exception e){
+            System.err.println("Auth email error:"+ e.toString());
+        }
+}
+public synchronized void AuthSuccess(int ID, Socket socket,String StudendID){
+    //removeAuth(ID);
+       // addThread(socket);
+    if (clientCount < clients.length) {
+        System.out.println("Client accepted: " + socket);
+        clients[clientCount] = new ChatServerThread(Auth[findAuth(ID)].GetThreadServer(), socket);
+        try {
+            clients[clientCount].open();
+            clients[clientCount].start();
+            if(this.clientCount == 0){
+                initAdmin();
+            }
+            acknowledgeNewClientJoin();
+            clientCount++;
+        } catch (IOException ioe) {
+            System.out.println("Error opening thread: " + ioe);
+        }
+    } else
+        System.out.println("Client refused: maximum " + clients.length + " reached.");
+
+}
+public synchronized void  AuthSendMessage(int ID, String plainText){
+        try{
+            //String plainText ="Auth Email";
+           // String plainText ="Please enter your HKBU Student ID";
+            String hash = toHash(plainText);
+
+            String cipherHash = encryptMessage(hash, (PrivateKey) keypair.get("private"));
+            // AES
+            byte[] cipherText = plainText.getBytes();
+
+            Message msg = new Message(this.getClass().getName(), cipherText, cipherHash, (PublicKey) keypair.get("public"));
+            msg.setMessageType(MessageType.SendAuthID);
+            Auth[findAuth(ID)].send(msg);
+        } catch (Exception e){
+            System.err.println("Auth email error:"+ e.toString());
+        }
+    }
+
 
     public synchronized void initAdmin(){
         try {
@@ -242,6 +341,21 @@ public class ChatServer implements Runnable {
 
         } catch (Exception e){
             System.err.println("Init Admin Error: " + e.toString());
+        }
+    }
+
+    public void SendAuthID(int ID, Message msg) {
+        try {
+            String hash = toHash(new String(msg.getCipher()));
+            String plainHash = decryptMessage(msg.getHash(), msg.getPublicKey());
+            if (hash.equals(plainHash)) {
+
+                //secKey = getSecretEncryptionKey();
+                System.out.println(msg.getUsername() + " : " + new String(msg.getCipher()));
+                Auth[findAuth(ID)].setup(new String(msg.getCipher()));
+            }
+        } catch (Exception e) {
+            System.err.println(e.toString());
         }
     }
 
