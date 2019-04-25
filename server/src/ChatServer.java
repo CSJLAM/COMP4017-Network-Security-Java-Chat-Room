@@ -1,3 +1,5 @@
+import com.sun.security.ntlm.Server;
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -43,8 +45,9 @@ public class ChatServer implements Runnable {
     private String chatRoomPW = "Comp4017";
 
 
-    public ChatServer() {
-        try {
+    public ChatServer(String ServerPW) {
+        this.chatRoomPW= ServerPW;
+    try {
             System.out.println("Binding to port " + port + ", please wait  ...");
             SSLContext ctx = SSLContext.getInstance("SSL");
 
@@ -68,7 +71,7 @@ public class ChatServer implements Runnable {
             md = MessageDigest.getInstance("SHA-512");
             keypair = getRSAKeys();
 
-            logFileHd = new FileHandler("etc/" + "Server" + ".log", false);
+            logFileHd = new FileHandler("./etc/" + "Server" + ".log", false);
             logFileHd.setFormatter(new LogFormatter());
             // get and configure logger
             log = Logger.getLogger("Server");
@@ -172,7 +175,10 @@ public class ChatServer implements Runnable {
 
 
     public synchronized void remove(int ID) {
+
+        log.info("Server : remove ID: "+ID+" .");
         int pos = findClient(ID);
+
         if (pos >= 0) {
             ChatServerThread toTerminate = clients[pos];
             System.out.println("Removing client thread " + ID + " at " + pos);
@@ -187,12 +193,30 @@ public class ChatServer implements Runnable {
             try {
                 if (pos == 0) {
                     changeAdmin();
+                    log.info("Server : Update Admin: "+clients[0].getID()+" .");
                 }
                 toTerminate.close();
             } catch (IOException ioe) {
                 System.out.println("Error closing thread: " + ioe);
             }
             toTerminate.stopThread();
+        }else{
+            pos = -1;
+        pos = findTempClient(ID);
+
+        if (pos >= 0) {
+            ChatServerThread toTerminate = tempClients[pos];
+            System.out.println("Removing Temp thread " + ID + " at " + pos);
+            if (pos < tempClientCount - 1) {
+                System.out.println("Client count" + tempClientCount);
+                System.out.println("Adjust client pos");
+                for (int i = pos + 1; i < tempClientCount; i++)
+                    tempClients[i - 1] = tempClients[i];
+            }
+
+            tempClientCount--;
+            toTerminate.stopThread();
+        }
         }
     }
 
@@ -455,6 +479,7 @@ public class ChatServer implements Runnable {
             Message msg = new Message(this.getClass().getName(), cipherText, cipherHash, (PublicKey) keypair.get("public"));
             msg.setMessageType(MessageType.initAdmin);
             clients[0].send(msg);
+            log.info("Server : Client : [" + clients[0].getID() +"] ---- Init Admin.");
 
         } catch (Exception e) {
             System.err.println("Init Admin Error: " + e.toString());

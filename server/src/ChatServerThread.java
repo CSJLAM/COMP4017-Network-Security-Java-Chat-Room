@@ -61,7 +61,7 @@ public class ChatServerThread extends Thread {
 //
 //            }
             if (ReceiveData.length() >= 12) {
-                if (ReceiveData.substring(ReceiveData.length() - 11).equals("hkbu.edu.hk")||ReceiveData.indexOf("@")>0) {
+                if (ReceiveData.substring(ReceiveData.length() - 11).equals("hkbu.edu.hk")&&ReceiveData.indexOf("@")>0) {
                     Status = 1;//One-time Password Email Sent
                     StudendID = ReceiveData;
                     sender.SendAuthEmail(StudendID, OneTimePassword);
@@ -79,7 +79,7 @@ public class ChatServerThread extends Thread {
                     //System.out.println("correct");
                     Status = 2;
                     server.AuthSuccess(ID);
-                    server.writelog("Client Thread : Client Created: [" + socket + "].");
+                    server.writelog("Client Thread : Client Created: [" + socket +"Client Name is:"+StudendID +"].");
                     server.writelog("Temp Thread : Temp Removed: [" + socket + "].");
                 } else {
                     //System.out.println("Wrong");
@@ -122,16 +122,19 @@ public class ChatServerThread extends Thread {
 
                 switch (msg.getMessageType()) {
                     case RequestSecKey:
+                        server.writelog("Client Thread : Client : [" + socket +"Client Name is:"+StudendID +"] ---- Client RequestSecKey.");
                         System.out.println("Reqest from client: " + new String(msg.getCipher()));
                         server.forwardSecKeyRequestToAdmin(msg);
                         break;
                     case SendSecretKey:
+                        server.writelog("Client Thread : Client : [" + socket +"Client Name is:"+StudendID +"] ---- Client SendSecretKey.");
                         server.sendTo(msg.getReceiver(), msg);
                         break;
                     case AuthResponse:
                         server.readAuth(ID, msg);
                         break;
                     default:
+                        server.writelog("Client Thread : Client : [" + socket +"Client Name is:"+StudendID +"] ---- Client Send Message Default.");
                         server.handle(ID, msg);
                         break;
 
@@ -140,6 +143,7 @@ public class ChatServerThread extends Thread {
 
             } catch (Exception e) {
                 System.out.println(ID + " ERROR reading: " + e.getMessage());
+
                 server.remove(ID);
                 stopThread();
             }
