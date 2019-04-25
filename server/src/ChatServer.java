@@ -17,6 +17,9 @@ import java.util.Map;
 
 public class ChatServer implements Runnable {
     private ChatServerThread clients[] = new ChatServerThread[50];
+    private ChatServerThread tempClients[] = new ChatServerThread[50];
+
+
     private static final String SERVER_KEY_STORE_PASSWORD       = "1234ks";
     private static final String SERVER_TRUST_KEY_STORE_PASSWORD = "9876ks";
     private SSLServerSocket serverSocket;
@@ -24,6 +27,7 @@ public class ChatServer implements Runnable {
     //private ServerSocket server = null;
     private volatile Thread thread = null;
     private int clientCount = 0;
+    private int tempClientCount = 0;
     private int port = 54321;
 
     private MessageDigest md;
@@ -72,7 +76,16 @@ public class ChatServer implements Runnable {
             try {
                 System.out.println("Waiting for a client ...");
                 s = serverSocket.accept();
-                addThread(s);
+                addTempThread(s);
+
+
+
+
+                // Do add thread after client auth
+//              addThread(s);
+
+
+
             } catch (IOException ioe) {
                 System.out.println("Server accept error: " + ioe);
                 stop();
@@ -155,6 +168,31 @@ public class ChatServer implements Runnable {
         }
     }
 
+    private void addTempThread(Socket socket) {
+        if (clientCount < clients.length) {
+            System.out.println("Add one Client wait for auth: " + socket);
+
+            tempClients[tempClientCount] = new ChatServerThread(this, socket);
+
+            try {
+                tempClients[tempClientCount].open();
+                tempClients[tempClientCount].start();
+
+//                if(this.clientCount == 0){
+//                    initAdmin();
+//                }
+//                acknowledgeNewClientJoin();
+
+                authRequest();
+                tempClientCount++;
+
+            } catch (IOException ioe) {
+                System.out.println("Error opening thread: " + ioe);
+            }
+        } else
+            System.out.println("Client refused: maximum " + clients.length + " reached.");
+    }
+
 
     private void addThread(Socket socket) {
         if (clientCount < clients.length) {
@@ -215,6 +253,63 @@ public class ChatServer implements Runnable {
         }
     }
 
+    public synchronized void authRequest(){
+        try {
+            String plainText ="Please enter your email and chat room password";
+
+            String hash = toHash(plainText);
+
+            String cipherHash = encryptMessage(hash, (PrivateKey) keypair.get("private"));
+
+            byte[] cipherText = plainText.getBytes();
+
+            Message msg = new Message(this.getClass().getName(), cipherText, cipherHash, (PublicKey) keypair.get("public"));
+            msg.setMessageType(MessageType.AuthRequest);
+
+            /**** The 0 index just simply send the auth msg to the first one client, you need to modify it to the right client
+             *    For each client, you need to generate and one time password and send the password to his email
+             *    --------->    So, you need to also store the user email and corressponding one time password for further autherdication
+             * ****/
+            tempClients[0].send(msg);
+
+        } catch (Exception e){
+            System.err.println("Auth request Error: ");
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void readAuth(Message msg){
+        try {
+            String hash = toHash(new String(msg.getCipher()));
+            String plainHash = decryptMessage(msg.getHash(), msg.getPublicKey());
+            if (hash.equals(plainHash)) {
+                System.out.println("Server: Auth Msg from: " + msg.getUsername() + " : " +  new String(msg.getCipher()));
+
+                /**************  if auth ok then XXXXXXXXXX ***************/
+
+
+                /*
+
+                check the client one time password match first
+
+                take out client from tempClient and remove from tempClient
+
+                put it to clients, and then start the normal procedure
+
+                eg: newClientJoin, initadmin, etc..... just like before
+
+
+                 */
+
+
+                /**************  if auth ok then XXXXXXXXXX ***************/
+
+            }
+        } catch (Exception e) {
+            System.err.println(e.toString());
+        }
+    }
+
     public synchronized void initAdmin(){
         try {
             String plainText ="Init Admin";
@@ -241,7 +336,7 @@ public class ChatServer implements Runnable {
             clients[0].send(msg);
 
         } catch (Exception e){
-            System.err.println("Init Admin Error: " + e.toString());
+            System.err.println("forwardSecKeyRequestToAdmin Error: " + e.toString());
         }
     }
 
@@ -332,7 +427,7 @@ public class ChatServer implements Runnable {
     public String toHash(String plainText) {
         md.update(plainText.getBytes());
 
-        System.out.println("plain content: " + plainText);
+        System.out.println("to hash plain content: " + plainText);
         byte[] digest = md.digest();
         //Converting the byte array in to HexString format
         StringBuffer hexString = new StringBuffer();

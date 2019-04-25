@@ -36,6 +36,8 @@ public class ChatClient implements Runnable {
 
     private boolean isAdmin = false;
 
+    private boolean isAuth = false;
+
 
     public ChatClient(String username) {
         System.out.println("Establishing connection. Please wait ...");
@@ -62,12 +64,42 @@ public class ChatClient implements Runnable {
             while (thread != null) {
                 try {
                     String plainText = console.readLine();
-                    handleSendMessage(plainText);
+
+                    if(this.isAuth) {
+                        handleSendMessage(plainText);
+                    } else {
+                        sendUnAuthMessage(plainText);
+                    }
+
                 } catch (IOException ioe) {
                     System.out.println("Sending error: " + ioe.getMessage());
                     stop();
                 }
             }
+    }
+
+    public void sendUnAuthMessage(String plainText) {
+        try {
+
+            System.out.println("Send UnAuth Message to server");
+
+            String hash = toHash(plainText);
+
+            // RSA
+            String cipherHash = encryptMessage(hash, (PrivateKey) keypair.get("private"));
+
+            // AES
+            byte[] cipherText = plainText.getBytes();
+
+            Message msg = new Message(this.username, cipherText, cipherHash, (PublicKey) keypair.get("public"));
+            msg.setMessageType(MessageType.AuthResponse);
+            objectOutputStream.writeObject(msg);
+            objectOutputStream.flush();
+//            streamOut.writeUTF(plainText);
+//            streamOut.flush();
+        } catch (Exception e) {
+            System.err.println("Error: " + e.toString());
+        }
     }
 
     public void handleSendMessage(String plainText) {
@@ -122,7 +154,10 @@ public class ChatClient implements Runnable {
         console = new BufferedReader(new InputStreamReader(System.in));
         streamOut = new DataOutputStream(socket.getOutputStream());
         objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-        requestSecKey();
+
+        // Send message to server to request secret key
+//        requestSecKey();
+
         if (thread == null) {
             client = new ChatClientThread(this, socket);
             thread = new Thread(this);
@@ -285,7 +320,18 @@ public class ChatClient implements Runnable {
         } catch(Exception e){
             System.err.println("Cannot read message: " + e.toString());
         }
+    }
 
+    public void readAuthMessage(Message msg){
+        try {
+            String hash = toHash(new String(msg.getCipher()));
+            String plainHash = decryptMessage(msg.getHash(), msg.getPublicKey());
+            if (hash.equals(plainHash)) {
+                System.out.println("Auth Msg: " + msg.getUsername() + " : " +  new String(msg.getCipher()));
+            }
+        } catch (Exception e) {
+            System.err.println(e.toString());
+        }
     }
 
     public void requestSecKey(){

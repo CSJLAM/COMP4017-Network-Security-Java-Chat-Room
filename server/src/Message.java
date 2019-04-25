@@ -4,7 +4,7 @@ import java.security.PublicKey;
 
 
 enum MessageType {
-    Client, initAdmin, SendSecretKey, NewClientJoin, RequestSecKey, changeAdmin
+    Client, initAdmin, SendSecretKey, NewClientJoin, RequestSecKey, changeAdmin, AuthRequest, AuthResponse
 }
 
 public class Message implements java.io.Serializable{

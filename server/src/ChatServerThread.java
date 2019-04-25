@@ -54,9 +54,13 @@ public class ChatServerThread extends Thread {
                     case SendSecretKey:
                         server.sendTo(msg.getReceiver(), msg);
                         break;
+                    case AuthResponse:
+                        server.readAuth(msg);
+                        break;
                     default:
                         server.handle(ID, msg);
                         break;
+
                 }
 
 

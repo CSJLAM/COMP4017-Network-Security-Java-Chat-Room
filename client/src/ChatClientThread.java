@@ -66,6 +66,9 @@ public class ChatClientThread extends Thread {
 
                         }
                         break;
+                    case AuthRequest:
+                        client.readAuthMessage(msg);
+                        break;
                     default:
                         break;
                 }
