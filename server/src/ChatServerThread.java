@@ -11,7 +11,7 @@ public class ChatServerThread extends Thread {
     private volatile Thread thread = null;
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
-    private int Status = 0;
+    private int Status = -1;
     private String OneTimePassword;
     private MailSender sender = new MailSender();
     private String StudendID;
@@ -28,26 +28,45 @@ public class ChatServerThread extends Thread {
         }
         System.out.println("Your one time password is " + OneTimePassword);
     }
+
     public void setup(String ReceiveData) {
-        if (Status == 0) {
-            if (ReceiveData.length() == 8) {
-                String[] StudentIDArray = ReceiveData.split("");
-                int[] StudentIDCheck = new int[StudentIDArray.length];
-                for (int i = 0; i < StudentIDArray.length; i++) {
-                    StudentIDCheck[i] = Integer.parseInt(StudentIDArray[i]);
-                }
-                int CheckSum = 0;
-                for (int i = 0, j = 8; i < StudentIDCheck.length; i++, j--) {
-                    CheckSum += StudentIDCheck[i] * j;
-                    // System.out.println(StudentIDCheck[i]);
-                }
-                if (CheckSum % 11 == 0) {
+        if (Status == -1) {
+            if (server.CheckPw(ReceiveData)) {
+                Status = 0;
+                server.authMessage(ID, "Please enter your HKBU email.");
+            } else {
+                server.authMessage(ID, "The password is not correct!\nPlease enter the chat room password");
+            }
+        } else if (Status == 0) {
+//            if (ReceiveData.length() == 8) {
+//                String[] StudentIDArray = ReceiveData.split("");
+//                int[] StudentIDCheck = new int[StudentIDArray.length];
+//                for (int i = 0; i < StudentIDArray.length; i++) {
+//                    StudentIDCheck[i] = Integer.parseInt(StudentIDArray[i]);
+//                }
+//                int CheckSum = 0;
+//                for (int i = 0, j = 8; i < StudentIDCheck.length; i++, j--) {
+//                    CheckSum += StudentIDCheck[i] * j;
+//                    // System.out.println(StudentIDCheck[i]);
+//                }
+//                if (CheckSum % 11 == 0) {
+//                    Status = 1;//One-time Password Email Sent
+//                    StudendID = ReceiveData;
+//                    sender.SendAuthEmail(StudendID + "@life.hkbu.edu.hk", OneTimePassword);
+//                    server.authMessage(ID, "We have Send you a one-time password email on your BU Email: " + StudendID + "@life.hkbu.edu.hk\nPlease enter the one time password");
+//                } else {
+//                    //System.out.println("Fail");
+//                    server.authMessage(ID, "Your ID is not correct!\nPlease enter your HKBU Student ID");
+//                }
+//
+//            }
+            if (ReceiveData.length() >= 12) {
+                if (ReceiveData.substring(ReceiveData.length() - 11).equals("hkbu.edu.hk")||ReceiveData.indexOf("@")>0) {
                     Status = 1;//One-time Password Email Sent
                     StudendID = ReceiveData;
-                    sender.SendAuthEmail(StudendID + "@life.hkbu.edu.hk", OneTimePassword);
-                    server.authMessage(ID, "We have Send you a one-time password email on your BU Email: " + StudendID + "@life.hkbu.edu.hk\nPlease enter the one time password");
+                    sender.SendAuthEmail(StudendID, OneTimePassword);
+                    server.authMessage(ID, "We have Send you a one-time password email on your BU Email: " + StudendID + "\nPlease enter the one time password");
                 } else {
-                    //System.out.println("Fail");
                     server.authMessage(ID, "Your ID is not correct!\nPlease enter your HKBU Student ID");
                 }
 
@@ -60,12 +79,14 @@ public class ChatServerThread extends Thread {
                     //System.out.println("correct");
                     Status = 2;
                     server.AuthSuccess(ID);
+                    server.writelog("Client Thread : Client Created: [" + socket + "].");
+                    server.writelog("Temp Thread : Temp Removed: [" + socket + "].");
                 } else {
                     //System.out.println("Wrong");
                     server.authMessage(ID, "Your One-time password is not correct!\nPlease enter the password.");
                 }
             } else {
-               // System.out.println("Wrong");
+                // System.out.println("Wrong");
                 server.authMessage(ID, "Your One-time password is not correct!\nPlease enter the password.");
             }
         }
@@ -90,6 +111,7 @@ public class ChatServerThread extends Thread {
 
     public void run() {
         System.out.println("Server Thread " + ID + " running.");
+
         Thread thisThread = Thread.currentThread();
         while (thread == thisThread) {
             try {
@@ -107,7 +129,7 @@ public class ChatServerThread extends Thread {
                         server.sendTo(msg.getReceiver(), msg);
                         break;
                     case AuthResponse:
-                        server.readAuth(ID,msg);
+                        server.readAuth(ID, msg);
                         break;
                     default:
                         server.handle(ID, msg);

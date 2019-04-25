@@ -28,6 +28,7 @@ public class ChatClient implements Runnable {
     private Map<String, Object> keypair;
     private String username;
     private SecretKey secKey;
+    private PublicKey ServerPK;
 
     private static final String CLIENT_KEY_STORE_PASSWORD = "9876ks";
     private static final String CLIENT_TRUST_KEY_STORE_PASSWORD = "1234ks";
@@ -68,6 +69,11 @@ public class ChatClient implements Runnable {
                     if(this.isAuth) {
                         handleSendMessage(plainText);
                     } else {
+                        if (plainText.length() >= 12) {
+                            if (plainText.substring(plainText.length() - 11).equals("hkbu.edu.hk")||plainText.indexOf("@")>0) {
+                               username=plainText+"~"+ socket.getLocalPort();
+                            }
+                        }
                         sendUnAuthMessage(plainText);
                     }
 
@@ -89,8 +95,11 @@ public class ChatClient implements Runnable {
             String cipherHash = encryptMessage(hash, (PrivateKey) keypair.get("private"));
 
             // AES
-            byte[] cipherText = plainText.getBytes();
-
+            //byte[] cipherText = plainText.getBytes();
+            String Temp = encryptMessage(plainText,(PublicKey) ServerPK);
+            //System.out.println("Temp: "+Temp);
+            byte[] cipherText = Temp.getBytes();
+            //System.out.println("Cipher: "+cipherText );
             Message msg = new Message(this.username, cipherText, cipherHash, (PublicKey) keypair.get("public"));
             msg.setMessageType(MessageType.AuthResponse);
             objectOutputStream.writeObject(msg);
@@ -326,6 +335,7 @@ public class ChatClient implements Runnable {
         try {
             String hash = toHash(new String(msg.getCipher()));
             String plainHash = decryptMessage(msg.getHash(), msg.getPublicKey());
+            ServerPK = msg.getPublicKey();
             if (hash.equals(plainHash)) {
                 System.out.println("Auth Msg: " + msg.getUsername() + " : " +  new String(msg.getCipher()));
                 if((new String(msg.getCipher())).equals("AuthSuss") ){

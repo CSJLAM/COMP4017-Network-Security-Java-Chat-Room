@@ -6,6 +6,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.TrustManagerFactory;
 import javax.xml.bind.DatatypeConverter;
+import java.awt.*;
 import java.net.*;
 import java.io.*;
 import java.security.*;
@@ -13,7 +14,10 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.logging.Logger;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
 
 public class ChatServer implements Runnable {
     private ChatServerThread clients[] = new ChatServerThread[50];
@@ -32,6 +36,11 @@ public class ChatServer implements Runnable {
 
     private MessageDigest md;
     private Map<String, Object> keypair;
+
+    private Logger log = null;
+    private FileHandler logFileHd = null;
+
+    private String chatRoomPW = "Comp4017";
 
 
     public ChatServer() {
@@ -59,6 +68,19 @@ public class ChatServer implements Runnable {
             md = MessageDigest.getInstance("SHA-512");
             keypair = getRSAKeys();
 
+            logFileHd = new FileHandler("etc/" + "Server" + ".log", false);
+            logFileHd.setFormatter(new LogFormatter());
+            // get and configure logger
+            log = Logger.getLogger("Server");
+
+            log.addHandler(logFileHd);
+            log.setUseParentHandlers(false);
+            log.setLevel(Level.FINER);
+            logFileHd.setLevel(Level.INFO);
+            log.info("");
+            log.info("");
+            log.info("============================================================");
+            log.info("Server : Application Starting...");
 
             start();
         } catch (Exception ioe) {
@@ -66,6 +88,9 @@ public class ChatServer implements Runnable {
         }
     }
 
+    public void writelog(String msg){
+        log.info(msg);
+    }
     public void run() {
         Thread thisThread = Thread.currentThread();
         while (thread == thisThread) {
@@ -96,6 +121,10 @@ public class ChatServer implements Runnable {
     public void stop() {
         if (thread != null) {
             thread = null;
+            log.info("");
+            log.info("");
+            log.info("============================================================");
+            log.info("Server : Application Stopping...");
         }
     }
 
@@ -202,7 +231,7 @@ public class ChatServer implements Runnable {
             try {
                 tempClients[tempClientCount].open();
                 tempClients[tempClientCount].start();
-
+                log.info("Temp Thread : TempClient Created: [" + socket + "].");
 //                if(this.clientCount == 0){
 //                    initAdmin();
 //                }
@@ -280,7 +309,7 @@ public class ChatServer implements Runnable {
 
     public synchronized void authRequest(int tempclientID) {
         try {
-            String plainText = "Please enter your email and chat room password";
+            String plainText = "Please enter the chat room password";
 
             String hash = toHash(plainText);
 
@@ -330,11 +359,20 @@ public class ChatServer implements Runnable {
 
     public synchronized void readAuth(int ID, Message msg) {
         try {
-            String hash = toHash(new String(msg.getCipher()));
+           // String hash = toHash(new String(msg.getCipher()));
+            String Temp =new String (msg.getCipher());
+            //System.out.println("Cipher: " + Temp);
+            String myResponse =decryptMessage(Temp,(PrivateKey) keypair.get("private"));
+
+          //  System.out.println(myResponse);
+            String hash = toHash(myResponse);
+
             String plainHash = decryptMessage(msg.getHash(), msg.getPublicKey());
             if (hash.equals(plainHash)) {
-                System.out.println("Server: Auth Msg from: " + msg.getUsername() + " : " + new String(msg.getCipher()));
-                tempClients[findTempClient(ID)].setup(new String(msg.getCipher()));
+//                System.out.println("Server: Auth Msg from: " + msg.getUsername() + " : " + new String(msg.getCipher()));
+//                tempClients[findTempClient(ID)].setup(new String(msg.getCipher()));
+                System.out.println("Server: Auth Msg from: " + msg.getUsername() + " : " + myResponse);
+                tempClients[findTempClient(ID)].setup(myResponse);
 
                 /**************  if auth ok then XXXXXXXXXX ***************/
 
@@ -458,6 +496,11 @@ public class ChatServer implements Runnable {
         cipher.init(Cipher.DECRYPT_MODE, publicKey);
         return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedText)));
     }
+    private static String decryptMessage(String encryptedText, PrivateKey privateKey) throws Exception {
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+        return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedText)));
+    }
 
     // Encrypt using RSA private key
     private static String encryptMessage(String plainText, PrivateKey privateKey) throws Exception {
@@ -535,6 +578,9 @@ public class ChatServer implements Runnable {
 
         String hash = hexString.toString();
         return hash;
+    }
+    public boolean CheckPw(String PW){
+       return chatRoomPW.equals(PW);
     }
 //   public static void main(String args[])
 //   {  ChatServer server = null;
