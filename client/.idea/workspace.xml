@@ -3,18 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="ecf80f55-112c-4fda-ab07-8d893dcf8fd6" name="Default" comment="One auth thread one-time password success &#10;but can't transfer the thread to the chat room">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Client/ChatClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Client/ChatClient.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Client/ChatClientThread$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Client/ChatClientThread$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Client/ChatClientThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Client/ChatClientThread.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Client/MessageType.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Client/MessageType.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ChatClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ChatClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ChatClientThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ChatClientThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Message.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../server/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/out/production/Server/ChatServer.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/out/production/Server/ChatServer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/out/production/Server/MessageType.class" beforeDir="false" afterPath="$PROJECT_DIR$/../server/out/production/Server/MessageType.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/ChatServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/ChatServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../server/src/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/../server/src/Message.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -49,11 +38,28 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ChatClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="60" column="40" lean-forward="true" selection-start-line="60" selection-start-column="40" selection-end-line="60" selection-end-column="40" />
+            <state relative-caret-position="-1214">
+              <caret line="265" column="21" selection-start-line="265" selection-start-column="21" selection-end-line="265" selection-end-column="21" />
               <folding>
+                <element signature="e#2915#3346#0" />
+                <element signature="e#3352#3566#0" />
+                <element signature="e#4035#4446#0" />
+                <element signature="e#4452#4983#0" />
+                <element signature="e#4989#5319#0" />
+                <element signature="e#5325#5659#0" />
+                <element signature="e#5665#5998#0" />
+                <element signature="e#6004#6333#0" />
+                <element signature="e#6339#6781#0" />
+                <element signature="e#6787#7317#0" />
+                <element signature="e#7308#7488#0" />
+                <element signature="e#7323#7885#0" />
+                <element signature="e#7876#7986#0" />
+                <element signature="e#8086#8148#1" />
                 <element signature="e#8731#8732#0" expanded="true" />
+                <element signature="e#8194#8225#1" />
                 <element signature="e#8808#8809#0" expanded="true" />
+                <element signature="e#9237#9754#0" />
+                <element signature="e#9760#10500#0" />
                 <element signature="e#14259#14260#0" expanded="true" />
                 <element signature="e#14342#14343#0" expanded="true" />
               </folding>
@@ -254,7 +260,8 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
+    <frame x="-8" y="-8" width="1456" height="876" extended-state="7" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17335244" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -353,11 +360,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ChatClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="60" column="40" lean-forward="true" selection-start-line="60" selection-start-column="40" selection-end-line="60" selection-end-column="40" />
+        <state relative-caret-position="-1214">
+          <caret line="265" column="21" selection-start-line="265" selection-start-column="21" selection-end-line="265" selection-end-column="21" />
           <folding>
+            <element signature="e#2915#3346#0" />
+            <element signature="e#3352#3566#0" />
+            <element signature="e#4035#4446#0" />
+            <element signature="e#4452#4983#0" />
+            <element signature="e#4989#5319#0" />
+            <element signature="e#5325#5659#0" />
+            <element signature="e#5665#5998#0" />
+            <element signature="e#6004#6333#0" />
+            <element signature="e#6339#6781#0" />
+            <element signature="e#6787#7317#0" />
+            <element signature="e#7308#7488#0" />
+            <element signature="e#7323#7885#0" />
+            <element signature="e#7876#7986#0" />
+            <element signature="e#8086#8148#1" />
             <element signature="e#8731#8732#0" expanded="true" />
+            <element signature="e#8194#8225#1" />
             <element signature="e#8808#8809#0" expanded="true" />
+            <element signature="e#9237#9754#0" />
+            <element signature="e#9760#10500#0" />
             <element signature="e#14259#14260#0" expanded="true" />
             <element signature="e#14342#14343#0" expanded="true" />
           </folding>
