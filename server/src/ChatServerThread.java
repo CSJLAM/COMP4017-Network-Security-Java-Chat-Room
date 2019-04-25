@@ -1,5 +1,6 @@
 import java.net.*;
 import java.io.*;
+import java.util.Random;
 
 public class ChatServerThread extends Thread {
     private ChatServer server = null;
@@ -10,13 +11,64 @@ public class ChatServerThread extends Thread {
     private volatile Thread thread = null;
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
+    private int Status = 0;
+    private String OneTimePassword;
+    private MailSender sender = new MailSender();
+    private String StudendID;
 
     public ChatServerThread(ChatServer _server, Socket _socket) {
         super();
         server = _server;
         socket = _socket;
         ID = socket.getPort();
+        Random rand = new Random();
+        OneTimePassword = Integer.toString(rand.nextInt(999999));
+        while (OneTimePassword.length() < 6) {
+            OneTimePassword = "0" + OneTimePassword;
+        }
+        System.out.println("Your one time password is " + OneTimePassword);
+    }
+    public void setup(String ReceiveData) {
+        if (Status == 0) {
+            if (ReceiveData.length() == 8) {
+                String[] StudentIDArray = ReceiveData.split("");
+                int[] StudentIDCheck = new int[StudentIDArray.length];
+                for (int i = 0; i < StudentIDArray.length; i++) {
+                    StudentIDCheck[i] = Integer.parseInt(StudentIDArray[i]);
+                }
+                int CheckSum = 0;
+                for (int i = 0, j = 8; i < StudentIDCheck.length; i++, j--) {
+                    CheckSum += StudentIDCheck[i] * j;
+                    // System.out.println(StudentIDCheck[i]);
+                }
+                if (CheckSum % 11 == 0) {
+                    Status = 1;//One-time Password Email Sent
+                    StudendID = ReceiveData;
+                    sender.SendAuthEmail(StudendID + "@life.hkbu.edu.hk", OneTimePassword);
+                    server.authMessage(ID, "We have Send you a one-time password email on your BU Email: " + StudendID + "@life.hkbu.edu.hk\nPlease enter the one time password");
+                } else {
+                    //System.out.println("Fail");
+                    server.authMessage(ID, "Your ID is not correct!\nPlease enter your HKBU Student ID");
+                }
 
+            } else {
+                server.authMessage(ID, "Your ID is not correct!\nPlease enter your HKBU Student ID");
+            }
+        } else if (Status == 1) {
+            if (ReceiveData.length() == 6) {
+                if (ReceiveData.equals(OneTimePassword)) {
+                    //System.out.println("correct");
+                    Status = 2;
+                    server.AuthSuccess(ID);
+                } else {
+                    //System.out.println("Wrong");
+                    server.authMessage(ID, "Your One-time password is not correct!\nPlease enter the password.");
+                }
+            } else {
+               // System.out.println("Wrong");
+                server.authMessage(ID, "Your One-time password is not correct!\nPlease enter the password.");
+            }
+        }
     }
 
     public void send(Message msg) {
@@ -55,7 +107,7 @@ public class ChatServerThread extends Thread {
                         server.sendTo(msg.getReceiver(), msg);
                         break;
                     case AuthResponse:
-                        server.readAuth(msg);
+                        server.readAuth(ID,msg);
                         break;
                     default:
                         server.handle(ID, msg);

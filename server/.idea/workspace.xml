@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="065de6dc-8fa6-4c96-91e4-187e6fb908d3" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/../client/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="065de6dc-8fa6-4c96-91e4-187e6fb908d3" name="Default" comment="re-factor code">
+      <change afterPath="$PROJECT_DIR$/javax.mail.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/MailSender.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../client/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../client/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/out/production/Client/ChatClient.class" beforeDir="false" afterPath="$PROJECT_DIR$/../client/out/production/Client/ChatClient.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/out/production/Client/ChatClientThread$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/../client/out/production/Client/ChatClientThread$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/out/production/Client/ChatClientThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/../client/out/production/Client/ChatClientThread.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/out/production/Client/MessageType.class" beforeDir="false" afterPath="$PROJECT_DIR$/../client/out/production/Client/MessageType.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../client/src/ChatClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/ChatClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/ChatClientThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/ChatClientThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/Message.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Server.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Server.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Server/ChatServer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Server/ChatServer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Server/ChatServerThread$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Server/ChatServerThread$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/Server/ChatServerThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Server/ChatServerThread.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Server/MessageType.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Server/MessageType.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ChatServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ChatServer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ChatServerThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ChatServerThread.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Message.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -31,46 +26,60 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/server$Main.ic" NAME="Main Coverage Results" MODIFIED="1554549092977" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="testRunner" value="GRADLE" />
+    <option name="delegatedBuild" value="true" />
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" selection-start-line="8" selection-end-line="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/ChatServerThread.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="57" column="34" selection-start-line="57" selection-start-column="34" selection-end-line="57" selection-end-column="34" />
+            <state>
+              <caret column="13" selection-start-column="13" selection-end-column="13" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/ChatServer.java">
+        <entry file="file://$PROJECT_DIR$/src/ChatServerThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1238">
-              <caret line="292" column="62" selection-start-line="292" selection-start-column="62" selection-end-line="292" selection-end-column="62" />
+            <state relative-caret-position="171">
+              <caret line="60" column="31" selection-start-line="60" selection-start-column="31" selection-end-line="60" selection-end-column="31" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#10263#10264#0" expanded="true" />
-                <element signature="e#10302#10303#0" expanded="true" />
-                <element signature="method#getRSAKeys#0;class#ChatServer#0" />
-                <element signature="method#decryptMessage#0;class#ChatServer#0" />
-                <element signature="method#encryptMessage#0;class#ChatServer#0" />
-                <element signature="docComment;method#getSecretEncryptionKey#0;class#ChatServer#0" />
-                <element signature="method#getSecretEncryptionKey#0;class#ChatServer#0" />
-                <element signature="docComment;method#secKeyEncryptText#0;class#ChatServer#0" />
-                <element signature="method#secKeyEncryptText#0;class#ChatServer#0" />
-                <element signature="docComment;method#secKeyDecryptText#0;class#ChatServer#0" />
-                <element signature="method#secKeyDecryptText#0;class#ChatServer#0" />
-                <element signature="docComment;method#bytesToHex#0;class#ChatServer#0" />
-                <element signature="e#14096#14097#0" expanded="true" />
+                <element signature="e#1012#1013#0" expanded="true" />
+                <element signature="e#1037#1038#0" expanded="true" />
+                <element signature="e#2903#2904#0" expanded="true" />
+                <element signature="e#2932#2933#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/MailSender.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="833">
+              <caret line="49" selection-start-line="49" selection-end-line="49" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#842#1076#0" expanded="true" />
+                <element signature="e#1075#1076#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/ChatServer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="141">
+              <caret line="369" column="25" selection-start-line="369" selection-start-column="25" selection-end-line="369" selection-end-column="25" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#15698#15699#0" expanded="true" />
+                <element signature="e#18692#18693#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -79,8 +88,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Message.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="11" column="26" lean-forward="true" selection-start-line="11" selection-start-column="26" selection-end-line="11" selection-end-column="26" />
+            <state relative-caret-position="-260">
+              <caret line="6" column="79" selection-start-line="6" selection-start-column="79" selection-end-line="6" selection-end-column="79" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -90,6 +99,13 @@
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
       <find>handle</find>
@@ -97,8 +113,26 @@
       <find>getNa</find>
       <find>Removing client</find>
       <find>Init Admin Error</find>
-      <find>auth</find>
       <find>plain content:</find>
+      <find>addtem</find>
+      <find>addthread</find>
+      <find>remove(ID</find>
+      <find>temp</find>
+      <find>findcli</find>
+      <find>changeadmin</find>
+      <find>changeadmin()</find>
+      <find>[0]</find>
+      <find>auth</find>
+      <find>remove(</find>
+      <find>Auth</find>
+      <find>Auth&quot;</find>
+      <find>readAuth</find>
+      <find>authRequest</find>
+      <find>read</find>
+      <find>authremove</find>
+      <find>tempClientCount</find>
+      <find>findTempClient</find>
+      <find>Authremove</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -110,14 +144,15 @@
         <option value="$PROJECT_DIR$/src/ChatClient.java" />
         <option value="$PROJECT_DIR$/src/Main.java" />
         <option value="$PROJECT_DIR$/src/Message.java" />
-        <option value="$PROJECT_DIR$/src/ChatServerThread.java" />
+        <option value="$PROJECT_DIR$/src/MailSender.java" />
         <option value="$PROJECT_DIR$/src/ChatServer.java" />
+        <option value="$PROJECT_DIR$/src/ChatServerThread.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="231" />
-    <option name="y" value="59" />
+    <option name="x" value="578" />
+    <option name="y" value="107" />
     <option name="width" value="1400" />
     <option name="height" value="820" />
   </component>
@@ -148,11 +183,18 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1556168010050" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../client" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/javax.mail.jar!/" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jason\Documents\java-chat-system\server" />
+    </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="" />
     </key>
@@ -212,9 +254,9 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18496802" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19054441" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -223,12 +265,12 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3253796" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3243607" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32936078" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.32936078" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.32839838" />
       <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.32936078" />
@@ -247,50 +289,130 @@
     <entry file="file://$PROJECT_DIR$/src/ChatClient.java" />
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
+        <state>
+          <caret column="13" selection-start-column="13" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Message.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="26" lean-forward="true" selection-start-line="11" selection-start-column="26" selection-end-line="11" selection-end-column="26" />
+        <state relative-caret-position="-260">
+          <caret line="6" column="79" selection-start-line="6" selection-start-column="79" selection-end-line="6" selection-end-column="79" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/MailSender.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="833">
+          <caret line="49" selection-start-line="49" selection-end-line="49" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#842#1076#0" expanded="true" />
+            <element signature="e#1075#1076#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ChatServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="141">
+          <caret line="369" column="25" selection-start-line="369" selection-start-column="25" selection-end-line="369" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#15698#15699#0" expanded="true" />
+            <element signature="e#18692#18693#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ChatServerThread.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="57" column="34" selection-start-line="57" selection-start-column="34" selection-end-line="57" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/ChatServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1238">
-          <caret line="292" column="62" selection-start-line="292" selection-start-column="62" selection-end-line="292" selection-end-column="62" />
+        <state relative-caret-position="171">
+          <caret line="60" column="31" selection-start-line="60" selection-start-column="31" selection-end-line="60" selection-end-column="31" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#10263#10264#0" expanded="true" />
-            <element signature="e#10302#10303#0" expanded="true" />
-            <element signature="method#getRSAKeys#0;class#ChatServer#0" />
-            <element signature="method#decryptMessage#0;class#ChatServer#0" />
-            <element signature="method#encryptMessage#0;class#ChatServer#0" />
-            <element signature="docComment;method#getSecretEncryptionKey#0;class#ChatServer#0" />
-            <element signature="method#getSecretEncryptionKey#0;class#ChatServer#0" />
-            <element signature="docComment;method#secKeyEncryptText#0;class#ChatServer#0" />
-            <element signature="method#secKeyEncryptText#0;class#ChatServer#0" />
-            <element signature="docComment;method#secKeyDecryptText#0;class#ChatServer#0" />
-            <element signature="method#secKeyDecryptText#0;class#ChatServer#0" />
-            <element signature="docComment;method#bytesToHex#0;class#ChatServer#0" />
-            <element signature="e#14096#14097#0" expanded="true" />
+            <element signature="e#1012#1013#0" expanded="true" />
+            <element signature="e#1037#1038#0" expanded="true" />
+            <element signature="e#2903#2904#0" expanded="true" />
+            <element signature="e#2932#2933#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>Server</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
   </component>
 </project>

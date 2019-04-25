@@ -328,6 +328,10 @@ public class ChatClient implements Runnable {
             String plainHash = decryptMessage(msg.getHash(), msg.getPublicKey());
             if (hash.equals(plainHash)) {
                 System.out.println("Auth Msg: " + msg.getUsername() + " : " +  new String(msg.getCipher()));
+                if((new String(msg.getCipher())).equals("AuthSuss") ){
+                    requestSecKey();
+                    isAuth=true;
+                }
             }
         } catch (Exception e) {
             System.err.println(e.toString());

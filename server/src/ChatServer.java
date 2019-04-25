@@ -20,7 +20,7 @@ public class ChatServer implements Runnable {
     private ChatServerThread tempClients[] = new ChatServerThread[50];
 
 
-    private static final String SERVER_KEY_STORE_PASSWORD       = "1234ks";
+    private static final String SERVER_KEY_STORE_PASSWORD = "1234ks";
     private static final String SERVER_TRUST_KEY_STORE_PASSWORD = "9876ks";
     private SSLServerSocket serverSocket;
     private Socket s;
@@ -32,7 +32,6 @@ public class ChatServer implements Runnable {
 
     private MessageDigest md;
     private Map<String, Object> keypair;
-
 
 
     public ChatServer() {
@@ -61,9 +60,6 @@ public class ChatServer implements Runnable {
             keypair = getRSAKeys();
 
 
-
-
-
             start();
         } catch (Exception ioe) {
             System.err.println("Can not bind to port " + port + ": " + ioe.toString());
@@ -79,11 +75,8 @@ public class ChatServer implements Runnable {
                 addTempThread(s);
 
 
-
-
                 // Do add thread after client auth
 //              addThread(s);
-
 
 
             } catch (IOException ioe) {
@@ -113,6 +106,13 @@ public class ChatServer implements Runnable {
         return -1;
     }
 
+    private int findTempClient(int ID) {
+        for (int i = 0; i < tempClientCount; i++)
+            if (tempClients[i].getID() == ID)
+                return i;
+        return -1;
+    }
+
     public synchronized void handle(Message msg) {
 //        if (input.equals(".bye")) {
 //            clients[findClient(ID)].send(".bye");
@@ -120,7 +120,7 @@ public class ChatServer implements Runnable {
 //        } else
 //            for (int i = 0; i < clientCount; i++)
 //                clients[i].send(ID + ": " + input);
-        for (int i = 0; i <= clientCount; i++){
+        for (int i = 0; i <= clientCount; i++) {
             clients[i].send(msg);
         }
     }
@@ -132,7 +132,7 @@ public class ChatServer implements Runnable {
 //        } else
 //            for (int i = 0; i < clientCount; i++)
 //                clients[i].send(ID + ": " + input);
-        for (int i = 0; i < clientCount; i++){
+        for (int i = 0; i < clientCount; i++) {
             clients[i].send(msg);
         }
     }
@@ -142,13 +142,12 @@ public class ChatServer implements Runnable {
     }
 
 
-
     public synchronized void remove(int ID) {
         int pos = findClient(ID);
         if (pos >= 0) {
             ChatServerThread toTerminate = clients[pos];
             System.out.println("Removing client thread " + ID + " at " + pos);
-            if (pos < clientCount - 1){
+            if (pos < clientCount - 1) {
                 System.out.println("Client count" + clientCount);
                 System.out.println("Adjust client pos");
                 for (int i = pos + 1; i < clientCount; i++)
@@ -157,7 +156,7 @@ public class ChatServer implements Runnable {
 
             clientCount--;
             try {
-                if(pos == 0){
+                if (pos == 0) {
                     changeAdmin();
                 }
                 toTerminate.close();
@@ -165,6 +164,32 @@ public class ChatServer implements Runnable {
                 System.out.println("Error closing thread: " + ioe);
             }
             toTerminate.stopThread();
+        }
+    }
+
+    public synchronized void Authremove(int ID) {
+        int pos = findTempClient(ID);
+        System.out.println("the pos is : "+pos);
+        if (pos >= 0) {
+            ChatServerThread toTerminate = tempClients[pos];
+            System.out.println("Removing temp client thread " + ID + " at " + pos);
+            if (pos < tempClientCount - 1) {
+                System.out.println("Client count" + tempClientCount);
+                System.out.println("Adjust client pos");
+                for (int i = pos + 1; i < tempClientCount; i++)
+                    tempClients[i - 1] = tempClients[i];
+            }
+
+            tempClientCount--;
+//            try {
+//                if(pos == 0){
+//                    changeAdmin();
+//                }
+//                toTerminate.close();
+//            } catch (IOException ioe) {
+//                System.out.println("Error closing thread: " + ioe);
+//            }
+//            toTerminate.stopThread();
         }
     }
 
@@ -183,7 +208,7 @@ public class ChatServer implements Runnable {
 //                }
 //                acknowledgeNewClientJoin();
 
-                authRequest();
+                authRequest(tempClientCount);
                 tempClientCount++;
 
             } catch (IOException ioe) {
@@ -201,7 +226,7 @@ public class ChatServer implements Runnable {
             try {
                 clients[clientCount].open();
                 clients[clientCount].start();
-                if(this.clientCount == 0){
+                if (this.clientCount == 0) {
                     initAdmin();
                 }
                 acknowledgeNewClientJoin();
@@ -213,10 +238,10 @@ public class ChatServer implements Runnable {
             System.out.println("Client refused: maximum " + clients.length + " reached.");
     }
 
-    private synchronized void acknowledgeNewClientJoin(){
+    private synchronized void acknowledgeNewClientJoin() {
 
         try {
-            String plainText = "A New Client " +  clients[clientCount].getID() + " Joined";
+            String plainText = "A New Client " + clients[clientCount].getID() + " Joined";
 
             String hash = toHash(plainText);
 
@@ -234,9 +259,9 @@ public class ChatServer implements Runnable {
         }
     }
 
-    public synchronized void changeAdmin(){
+    public synchronized void changeAdmin() {
         try {
-            String plainText ="Change Admin";
+            String plainText = "Change Admin";
 
             String hash = toHash(plainText);
 
@@ -248,14 +273,14 @@ public class ChatServer implements Runnable {
             msg.setMessageType(MessageType.changeAdmin);
             clients[0].send(msg);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             System.err.println("Change Admin Error: " + e.toString());
         }
     }
 
-    public synchronized void authRequest(){
+    public synchronized void authRequest(int tempclientID) {
         try {
-            String plainText ="Please enter your email and chat room password";
+            String plainText = "Please enter your email and chat room password";
 
             String hash = toHash(plainText);
 
@@ -270,20 +295,46 @@ public class ChatServer implements Runnable {
              *    For each client, you need to generate and one time password and send the password to his email
              *    --------->    So, you need to also store the user email and corressponding one time password for further autherdication
              * ****/
-            tempClients[0].send(msg);
+            tempClients[tempclientID].send(msg);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             System.err.println("Auth request Error: ");
             e.printStackTrace();
         }
     }
 
-    public synchronized void readAuth(Message msg){
+    public synchronized void authMessage(int tempclientID, String plainText) {
+        try {
+            //String plainText ="Please enter your email and chat room password";
+
+            String hash = toHash(plainText);
+
+            String cipherHash = encryptMessage(hash, (PrivateKey) keypair.get("private"));
+
+            byte[] cipherText = plainText.getBytes();
+
+            Message msg = new Message(this.getClass().getName(), cipherText, cipherHash, (PublicKey) keypair.get("public"));
+            msg.setMessageType(MessageType.AuthRequest);
+
+            /**** The 0 index just simply send the auth msg to the first one client, you need to modify it to the right client
+             *    For each client, you need to generate and one time password and send the password to his email
+             *    --------->    So, you need to also store the user email and corressponding one time password for further autherdication
+             * ****/
+            tempClients[findTempClient(tempclientID)].send(msg);
+
+        } catch (Exception e) {
+            System.err.println("Auth request Error: ");
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void readAuth(int ID, Message msg) {
         try {
             String hash = toHash(new String(msg.getCipher()));
             String plainHash = decryptMessage(msg.getHash(), msg.getPublicKey());
             if (hash.equals(plainHash)) {
-                System.out.println("Server: Auth Msg from: " + msg.getUsername() + " : " +  new String(msg.getCipher()));
+                System.out.println("Server: Auth Msg from: " + msg.getUsername() + " : " + new String(msg.getCipher()));
+                tempClients[findTempClient(ID)].setup(new String(msg.getCipher()));
 
                 /**************  if auth ok then XXXXXXXXXX ***************/
 
@@ -310,9 +361,52 @@ public class ChatServer implements Runnable {
         }
     }
 
-    public synchronized void initAdmin(){
+    public synchronized void AuthSuccess(int ID) {
+        if (clientCount < clients.length) {
+            //System.out.println("Client accepted: " + socket);
+            //clients[clientCount] = new ChatServerThread(this, socket);
+            clients[clientCount] = tempClients[findTempClient(ID)];
+            //tempClients[findTempClient(ID)]=null;
+            Authremove(ID);
+            try {
+                // clients[clientCount].open();
+                //clients[clientCount].start();
+                if (this.clientCount == 0) {
+                    initAdmin();
+                }
+                acknowledgeNewClientJoin();
+                clientCount++;
+            } catch (Exception ioe) {
+                System.out.println("Error opening thread: " + ioe);
+            }
+            try {
+                String plainText = "AuthSuss";
+                String hash = toHash(plainText);
+                String cipherHash = encryptMessage(hash, (PrivateKey) keypair.get("private"));
+                byte[] cipherText = plainText.getBytes();
+                Message msg = new Message(this.getClass().getName(), cipherText, cipherHash, (PublicKey) keypair.get("public"));
+                msg.setMessageType(MessageType.AuthRequest);
+
+                /**** The 0 index just simply send the auth msg to the first one client, you need to modify it to the right client
+                 *    For each client, you need to generate and one time password and send the password to his email
+                 *    --------->    So, you need to also store the user email and corressponding one time password for further autherdication
+                 * ****/
+                clients[clientCount - 1].send(msg);
+                System.out.println("Client Count: "+clientCount);
+                System.out.println("Temp Count: "+tempClientCount);
+
+            } catch (Exception e) {
+                System.err.println("Auth request Error: ");
+                e.printStackTrace();
+            }
+        } else
+            System.out.println("Client refused: maximum " + clients.length + " reached.");
+
+    }
+
+    public synchronized void initAdmin() {
         try {
-            String plainText ="Init Admin";
+            String plainText = "Init Admin";
 
             String hash = toHash(plainText);
 
@@ -324,7 +418,7 @@ public class ChatServer implements Runnable {
             msg.setMessageType(MessageType.initAdmin);
             clients[0].send(msg);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             System.err.println("Init Admin Error: " + e.toString());
         }
 
@@ -335,12 +429,12 @@ public class ChatServer implements Runnable {
 
             clients[0].send(msg);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             System.err.println("forwardSecKeyRequestToAdmin Error: " + e.toString());
         }
     }
 
-    public int getClientCount(){
+    public int getClientCount() {
         return this.clientCount;
     }
 
@@ -375,10 +469,11 @@ public class ChatServer implements Runnable {
     /**
      * gets the AES encryption key. In your actual programs, this should be safely
      * stored.
+     *
      * @return
      * @throws Exception
      */
-    public static SecretKey getSecretEncryptionKey() throws Exception{
+    public static SecretKey getSecretEncryptionKey() throws Exception {
         KeyGenerator generator = KeyGenerator.getInstance("AES");
         generator.init(128); // The AES key size in number of bits
         SecretKey secKey = generator.generateKey();
@@ -387,12 +482,13 @@ public class ChatServer implements Runnable {
 
     /**
      * Encrypts plainText in AES using the secret key
+     *
      * @param plainText
      * @param secKey
      * @return
      * @throws Exception
      */
-    public static byte[] secKeyEncryptText(String plainText,SecretKey secKey) throws Exception{
+    public static byte[] secKeyEncryptText(String plainText, SecretKey secKey) throws Exception {
         // AES defaults to AES/ECB/PKCS5Padding in Java 7
         Cipher aesCipher = Cipher.getInstance("AES");
         aesCipher.init(Cipher.ENCRYPT_MODE, secKey);
@@ -402,6 +498,7 @@ public class ChatServer implements Runnable {
 
     /**
      * Decrypts encrypted byte array using the key used for encryption.
+     *
      * @param byteCipherText
      * @param secKey
      * @return
@@ -417,10 +514,11 @@ public class ChatServer implements Runnable {
 
     /**
      * Convert a binary byte array into readable hex form
+     *
      * @param hash
      * @return
      */
-    private static String  bytesToHex(byte[] hash) {
+    private static String bytesToHex(byte[] hash) {
         return DatatypeConverter.printHexBinary(hash);
     }
 
