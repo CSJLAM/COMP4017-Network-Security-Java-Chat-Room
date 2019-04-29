@@ -45,9 +45,10 @@ public class ChatServer implements Runnable {
     private String chatRoomPW = "Comp4017";
 
 
-    public ChatServer(String ServerPW) {
-        this.chatRoomPW= ServerPW;
-    try {
+    public ChatServer(String ServerPW,int port ) {
+        this.port=port;
+        this.chatRoomPW = ServerPW;
+        try {
             System.out.println("Binding to port " + port + ", please wait  ...");
             SSLContext ctx = SSLContext.getInstance("SSL");
 
@@ -91,9 +92,10 @@ public class ChatServer implements Runnable {
         }
     }
 
-    public void writelog(String msg){
+    public void writelog(String msg) {
         log.info(msg);
     }
+
     public void run() {
         Thread thisThread = Thread.currentThread();
         while (thread == thisThread) {
@@ -176,7 +178,7 @@ public class ChatServer implements Runnable {
 
     public synchronized void remove(int ID) {
 
-        log.info("Server : remove ID: "+ID+" .");
+        log.info("Server : remove ID: " + ID + " .");
         int pos = findClient(ID);
 
         if (pos >= 0) {
@@ -193,36 +195,36 @@ public class ChatServer implements Runnable {
             try {
                 if (pos == 0) {
                     changeAdmin();
-                    log.info("Server : Update Admin: "+clients[0].getID()+" .");
+                    log.info("Server : Update Admin: " + clients[0].getID() + " .");
                 }
                 toTerminate.close();
             } catch (IOException ioe) {
                 System.out.println("Error closing thread: " + ioe);
             }
             toTerminate.stopThread();
-        }else{
+        } else {
             pos = -1;
-        pos = findTempClient(ID);
+            pos = findTempClient(ID);
 
-        if (pos >= 0) {
-            ChatServerThread toTerminate = tempClients[pos];
-            System.out.println("Removing Temp thread " + ID + " at " + pos);
-            if (pos < tempClientCount - 1) {
-                System.out.println("Client count" + tempClientCount);
-                System.out.println("Adjust client pos");
-                for (int i = pos + 1; i < tempClientCount; i++)
-                    tempClients[i - 1] = tempClients[i];
+            if (pos >= 0) {
+                ChatServerThread toTerminate = tempClients[pos];
+                System.out.println("Removing Temp thread " + ID + " at " + pos);
+                if (pos < tempClientCount - 1) {
+                    System.out.println("Client count" + tempClientCount);
+                    System.out.println("Adjust client pos");
+                    for (int i = pos + 1; i < tempClientCount; i++)
+                        tempClients[i - 1] = tempClients[i];
+                }
+
+                tempClientCount--;
+                toTerminate.stopThread();
             }
-
-            tempClientCount--;
-            toTerminate.stopThread();
-        }
         }
     }
 
     public synchronized void Authremove(int ID) {
         int pos = findTempClient(ID);
-        System.out.println("the pos is : "+pos);
+        System.out.println("the pos is : " + pos);
         if (pos >= 0) {
             ChatServerThread toTerminate = tempClients[pos];
             System.out.println("Removing temp client thread " + ID + " at " + pos);
@@ -234,15 +236,6 @@ public class ChatServer implements Runnable {
             }
 
             tempClientCount--;
-//            try {
-//                if(pos == 0){
-//                    changeAdmin();
-//                }
-//                toTerminate.close();
-//            } catch (IOException ioe) {
-//                System.out.println("Error closing thread: " + ioe);
-//            }
-//            toTerminate.stopThread();
         }
     }
 
@@ -256,11 +249,6 @@ public class ChatServer implements Runnable {
                 tempClients[tempClientCount].open();
                 tempClients[tempClientCount].start();
                 log.info("Temp Thread : TempClient Created: [" + socket + "].");
-//                if(this.clientCount == 0){
-//                    initAdmin();
-//                }
-//                acknowledgeNewClientJoin();
-
                 authRequest(tempClientCount);
                 tempClientCount++;
 
@@ -294,7 +282,7 @@ public class ChatServer implements Runnable {
     private synchronized void acknowledgeNewClientJoin() {
 
         try {
-            String plainText = "A New Client " + clients[clientCount].getID() + " Joined";
+            String plainText = "A New Client " + clients[clientCount].getStudendID() + "~" + clients[clientCount].getID() + " Joined";
 
             String hash = toHash(plainText);
 
@@ -383,12 +371,12 @@ public class ChatServer implements Runnable {
 
     public synchronized void readAuth(int ID, Message msg) {
         try {
-           // String hash = toHash(new String(msg.getCipher()));
-            String Temp =new String (msg.getCipher());
+            // String hash = toHash(new String(msg.getCipher()));
+            String Temp = new String(msg.getCipher());
             //System.out.println("Cipher: " + Temp);
-            String myResponse =decryptMessage(Temp,(PrivateKey) keypair.get("private"));
+            String myResponse = decryptMessage(Temp, (PrivateKey) keypair.get("private"));
 
-          //  System.out.println(myResponse);
+            //  System.out.println(myResponse);
             String hash = toHash(myResponse);
 
             String plainHash = decryptMessage(msg.getHash(), msg.getPublicKey());
@@ -454,8 +442,8 @@ public class ChatServer implements Runnable {
                  *    --------->    So, you need to also store the user email and corressponding one time password for further autherdication
                  * ****/
                 clients[clientCount - 1].send(msg);
-                System.out.println("Client Count: "+clientCount);
-                System.out.println("Temp Count: "+tempClientCount);
+                System.out.println("Client Count: " + clientCount);
+                System.out.println("Temp Count: " + tempClientCount);
 
             } catch (Exception e) {
                 System.err.println("Auth request Error: ");
@@ -479,7 +467,7 @@ public class ChatServer implements Runnable {
             Message msg = new Message(this.getClass().getName(), cipherText, cipherHash, (PublicKey) keypair.get("public"));
             msg.setMessageType(MessageType.initAdmin);
             clients[0].send(msg);
-            log.info("Server : Client : [" + clients[0].getID() +"] ---- Init Admin.");
+            log.info("Server : Client : [" + clients[0].getID() + "] ---- Init Admin.");
 
         } catch (Exception e) {
             System.err.println("Init Admin Error: " + e.toString());
@@ -521,6 +509,7 @@ public class ChatServer implements Runnable {
         cipher.init(Cipher.DECRYPT_MODE, publicKey);
         return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedText)));
     }
+
     private static String decryptMessage(String encryptedText, PrivateKey privateKey) throws Exception {
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
@@ -604,8 +593,9 @@ public class ChatServer implements Runnable {
         String hash = hexString.toString();
         return hash;
     }
-    public boolean CheckPw(String PW){
-       return chatRoomPW.equals(PW);
+
+    public boolean CheckPw(String PW) {
+        return chatRoomPW.equals(PW);
     }
 //   public static void main(String args[])
 //   {  ChatServer server = null;

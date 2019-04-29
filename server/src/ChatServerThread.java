@@ -108,6 +108,10 @@ public class ChatServerThread extends Thread {
     public int getID() {
         return ID;
     }
+    public String getStudendID(){
+        return StudendID;
+    }
+
 
     public void run() {
         System.out.println("Server Thread " + ID + " running.");

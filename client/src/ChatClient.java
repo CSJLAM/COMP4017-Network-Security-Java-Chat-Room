@@ -40,9 +40,11 @@ public class ChatClient implements Runnable {
     private boolean isAuth = false;
 
 
-    public ChatClient(String username) {
+    public ChatClient(String username,String serverName,int serverPort) {
         System.out.println("Establishing connection. Please wait ...");
         this.username = username;
+        this.serverName=serverName;
+        this.serverPort=serverPort;
 
         try {
 
