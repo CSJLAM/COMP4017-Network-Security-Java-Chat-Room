@@ -1,0 +1,12 @@
+190426-11:10:14 [INFO] -- 
+190426-11:10:14 [INFO] -- 
+190426-11:10:14 [INFO] -- ============================================================
+190426-11:10:14 [INFO] -- Server : Application Starting...
+190426-11:10:22 [INFO] -- Temp Thread : TempClient Created: [63fb5da1[TLS_DHE_DSS_WITH_AES_256_CBC_SHA256: Socket[addr=/127.0.0.1,port=55007,localport=54321]]].
+190426-11:10:39 [INFO] -- Server : remove ID: 55007 .
+190426-11:10:51 [INFO] -- Temp Thread : TempClient Created: [1dd70f6c[TLS_DHE_DSS_WITH_AES_256_CBC_SHA256: Socket[addr=/127.0.0.1,port=55013,localport=54321]]].
+190426-11:10:54 [INFO] -- Server : remove ID: 55013 .
+190426-11:10:59 [INFO] -- Temp Thread : TempClient Created: [578acf9f[TLS_DHE_DSS_WITH_AES_256_CBC_SHA256: Socket[addr=/127.0.0.1,port=55014,localport=54321]]].
+190426-11:11:16 [INFO] -- Server : remove ID: 55014 .
+190426-11:11:24 [INFO] -- Temp Thread : TempClient Created: [5716615b[TLS_DHE_DSS_WITH_AES_256_CBC_SHA256: Socket[addr=/127.0.0.1,port=55015,localport=54321]]].
+190426-11:11:28 [INFO] -- Server : remove ID: 55015 .
